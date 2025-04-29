@@ -1,11 +1,22 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI(
     title="Question Answering API",
     description="Simple API that returns placeholder answers",
     version="1.0.0"
+)
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 class QuestionRequest(BaseModel):
@@ -24,11 +35,14 @@ async def get_answer(request: QuestionRequest):
     - **question**: The question text to be answered
     - **metadata**: Optional additional context (not processed in this example)
     """
+
     try:
-        return {
-            "answer": "no answer",  # Placeholder response
-        }
+        answer = "no answer"  # Placeholder response
+        response_data = {"answer": answer}
+
+        return response_data
     except Exception as e:
+        print(e)
         raise HTTPException(
             status_code=500,
             detail=f"Error processing question: {str(e)}"
