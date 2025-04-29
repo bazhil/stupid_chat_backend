@@ -1,17 +1,20 @@
 version: '3.8'
 
 services:
-  app:
-    build: .
+  server:
+    build:
+      context: .
     ports:
       - "8000:8000"
-    environment:
-      - PORT=8000
-    volumes:
-      - .:/app
-    restart: unless-stopped
+    restart: always
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
       interval: 30s
       timeout: 10s
-      retries: 3
+      retries: 3 
+  client:
+    build:
+      context: ./client
+    ports:
+      - "3000:3000"
+    restart: always
