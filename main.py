@@ -1,5 +1,13 @@
+from typing import Optional
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+import logging
+
+from fastapi.middleware.cors import CORSMiddleware
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 app = FastAPI(
@@ -8,16 +16,21 @@ app = FastAPI(
     version="1.0.0"
 )
 
-class QuestionRequest(BaseModel):
-    question: str
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
-class AnswerResponse(BaseModel):
-    answer: str
+class Message(BaseModel):
+    replica: str
 
 
-@app.post("/get_answer", response_model=AnswerResponse)
-async def get_answer(request: QuestionRequest):
+@app.post("/get_answer", response_model=Message)
+async def get_answer(request: Optional[Message]):
     """
     Endpoint that accepts a question and returns a placeholder answer
     
@@ -25,9 +38,9 @@ async def get_answer(request: QuestionRequest):
     - **metadata**: Optional additional context (not processed in this example)
     """
     try:
-        return {
-            "answer": "no answer",  # Placeholder response
-        }
+        result = Message(replica="no answer")
+
+        return result
     except Exception as e:
         raise HTTPException(
             status_code=500,

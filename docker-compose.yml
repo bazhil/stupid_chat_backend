@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  app:
+  backend:
     build: .
     ports:
       - "8000:8000"
@@ -15,3 +15,13 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+
+  frontend:
+    image: stupid_frontend
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      - API_URL=http://backend:8000
