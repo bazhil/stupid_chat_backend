@@ -39,7 +39,7 @@ async def get_answer(request: Optional[Message]):
     """
     try:
         result = Message(replica="no answer")
-
+        result = Message(replica="Sorry i can't help you")
         return result
     except Exception as e:
         raise HTTPException(
